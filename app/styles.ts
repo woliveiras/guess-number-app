@@ -1,35 +1,35 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  informationContainer: {
-    flex: 2,
+  container: {
+    flex: 1,
+    backgroundColor: "#000",
+  },
+  leaderboardContainer: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "flex-end",
-    backgroundColor: "lightblue",
-    paddingBottom: 80,
+  },
+  informationContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   userGuessContainer: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "lightgray",
-    borderTopWidth: 5,
-    borderBottomWidth: 5,
   },
   buttonsContainer: {
     flex: 1,
-    height: 50,
     justifyContent: "center",
-    backgroundColor: "pink",
-  },
-  guess: {
-    fontSize: 20,
   },
   guessHighlight: {
-    fontSize: 80,
+    color: "#fff",
+    fontSize: 200,
     fontWeight: "bold",
   },
   text: {
+    color: "#fff",
     fontSize: 18,
   },
   buttons: {
@@ -46,10 +46,10 @@ export const styles = StyleSheet.create({
     marginBottom: 20,
     padding: 25,
     borderRadius: 10,
-    backgroundColor: "#000",
+    backgroundColor: "pink",
   },
   buttonText: {
-    color: "#fff",
+    fontWeight: "bold",
     fontSize: 20,
   },
 });

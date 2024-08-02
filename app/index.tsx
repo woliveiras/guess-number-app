@@ -12,27 +12,39 @@ enum Results {
 type Result = (typeof Results)[keyof typeof Results];
 
 export default function Index() {
+  const [leaderboard, setLeaderboard] = useState({ wins: 0, loses: 0 });
   const [guess, setGuess] = useState(0);
   const [result, setResult] = useState<Result>(Results.WAITING);
   const [number, setNumber] = useState(0);
+  const [notification, setNotification] = useState("");
 
   useEffect(() => {
-    const randomNumber = Math.floor(Math.random() * 101);
-
+    if (number !== 0) return;
+    const randomNumber = Math.floor(Math.random() * 51);
     setNumber(randomNumber);
-  }, []);
+  }, [number]);
 
-  if (result === Results.WIN) {
-    Alert.alert("Result", "You win!", [
-      { text: "Restart", onPress: () => handleRestart() },
-    ]);
-  }
+  useEffect(() => {
+    if (result === Results.WIN) {
+      setLeaderboard((prev) => ({ ...prev, wins: prev.wins + 1 }));
+      Alert.alert("Result", "Você ganhou!!!", [
+        {
+          text: "Restart",
+          onPress: () => onWin(),
+        },
+      ]);
+    }
 
-  if (result === Results.LOSE) {
-    Alert.alert("Result", "You lose!", [
-      { text: "Restart", onPress: () => handleRestart() },
-    ]);
-  }
+    if (result === Results.LOSE) {
+      setLeaderboard((prev) => ({ ...prev, loses: prev.loses + 1 }));
+      Alert.alert("Result", "Você perdeu!", [
+        {
+          text: "Restart",
+          onPress: () => onLose(),
+        },
+      ]);
+    }
+  }, [result]);
 
   const handleGuessButton = (value: number) => {
     if (value < 0) {
@@ -54,24 +66,52 @@ export default function Index() {
     return setResult(Results.LOSE);
   };
 
-  const handleRestart = () => {
+  const onLose = () => {
+    const diff = Math.abs(number - guess);
+
+    if (diff <= 1) {
+      setNotification("Tá pegando fogo! 🔥🔥🔥");
+    } else if (diff <= 2) {
+      setNotification("Está quente! 🔥🔥");
+    } else if (diff <= 5) {
+      setNotification("Está morno! 🔥");
+    } else if (diff <= 10) {
+      setNotification("Está frio! ❄️");
+    } else {
+      setNotification("Está muito frio! ❄️❄️❄️");
+    }
+
+    setResult(Results.WAITING);
+  };
+
+  const onWin = () => {
+    setNotification("");
     setResult(Results.WAITING);
     setGuess(0);
-    setNumber(Math.floor(Math.random() * 101));
+    setNumber(Math.floor(Math.random() * 51));
   };
 
   return (
-    <>
+    <View style={styles.container}>
+      <View style={styles.leaderboardContainer}>
+        <Text style={styles.text}>Pontuação</Text>
+        <>
+          <Text style={styles.text}>Vitórias: {leaderboard.wins}</Text>
+          <Text style={styles.text}>Derrotas: {leaderboard.loses}</Text>
+        </>
+      </View>
+
       <View style={styles.informationContainer}>
         <Text style={styles.text}>
-          Click on the buttons to update your guess.
+          Clique nos botões para escolher um número.
         </Text>
-        <Text style={styles.text}>Click on Go to guess the number.</Text>
+        <Text style={styles.text}>Clique em "Jogar!" para apostar.</Text>
+        <Text style={styles.text}>O número está entre 1 e 50.</Text>
+        {notification ? <Text style={styles.text}>{notification}</Text> : null}
       </View>
 
       <View style={styles.userGuessContainer}>
         <Text style={styles.guessHighlight}>{guess}</Text>
-        <Text style={styles.guess}>Your guess</Text>
       </View>
 
       <View style={styles.buttonsContainer}>
@@ -89,7 +129,7 @@ export default function Index() {
             <Text style={styles.buttonText}>-1</Text>
           </Pressable>
           <Pressable style={styles.button} onPress={() => handleStart(guess)}>
-            <Text style={styles.buttonText}>Go!</Text>
+            <Text style={styles.buttonText}>Jogar!</Text>
           </Pressable>
           <Pressable
             style={styles.button}
@@ -105,6 +145,6 @@ export default function Index() {
           </Pressable>
         </View>
       </View>
-    </>
+    </View>
   );
 }
